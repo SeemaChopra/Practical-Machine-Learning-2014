@@ -47,15 +47,11 @@ intrain<-createDataPartition(y=newdata1$classe,p=0.5,list=FALSE)
 training<-newdata1[intrain,]
 testing<-newdata1[-intrain,]
 ```
-Now we are reday to devolp the model on training data and then we will test our model on testing data set. I have tried different model like PCA, KNN and Randomforest. But I found best results from Randomforest.Parameters will be tuned via 5-fold cross validation. I am showing only Randome forest code here, because I helps me to creat fast html file.
+Now we are reday to devolp the model on training data and then we will test our model on testing data set. I have tried different model like PCA, KNN and Randomforest. But I found best results from Randomforest.Parameters will be tuned via 5-fold cross validation.
 
 ```{r}
 set.seed(123)
 cvCtrl <- trainControl(method = "cv", number = 5, allowParallel = TRUE, verboseIter = TRUE)
-
-## KNN Method
-## modelfit <- train(classe ~ ., data = training, method = "knn", trControl = cvCtrl)
-## Random forest
 modelfit <- train(classe ~ ., data = training, method = "rf", trControl = cvCtrl)
 
 #testing it on testing data
@@ -64,17 +60,6 @@ table(testing$classe,pred)
 ```
 You can also embed plots, for example:
 
-```{r}
-#Validation on the testing.CSV file
-pred1<-predict(modelfit,data1)
-
-pml_write_files = function(x){
-  n = length(x)
-  for(i in 1:n){
-    filename = paste0("problem_id_",i,".txt")
-    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
-  }
-}
-
-pml_write_files(pred1)
+```{r fig.width=7, fig.height=6}
+varImpPlot(modelfit$finalModel)
 ```
